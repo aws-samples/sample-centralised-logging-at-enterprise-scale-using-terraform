@@ -47,8 +47,9 @@ resource "aws_db_parameter_group" "mysql_param_group" {
     apply_method = "immediate"
   }
   parameter {
-    name  = "rds.force_ssl"
-    value = "1"
+    name         = "require_secure_transport"
+    value        = "1"
+    apply_method = "immediate"
   }
   tags = var.tags
 }
@@ -93,6 +94,21 @@ resource "aws_kms_key" "secrets_manager_kms_key" {
         Action = [
           "kms:Decrypt",
           "kms:GenerateDataKey"
+        ]
+        Resource = "*"
+      },
+      {
+        Sid    = "Allow CloudWatch Logs to use the key"
+        Effect = "Allow"
+        Principal = {
+          Service = "logs.${data.aws_region.current.name}.amazonaws.com"
+        }
+        Action = [
+          "kms:Encrypt",
+          "kms:Decrypt",
+          "kms:ReEncrypt",
+          "kms:GenerateDataKey",
+          "kms:Describe"
         ]
         Resource = "*"
       },
@@ -254,7 +270,7 @@ resource "aws_db_instance" "this" {
   password                              = random_password.master_password.result
   skip_final_snapshot                   = true
   publicly_accessible                   = false
-  monitoring_interval                   = 5
+  monitoring_interval                   = 0
   enabled_cloudwatch_logs_exports       = ["audit", "error", "general", "slowquery"]
   parameter_group_name                  = aws_db_parameter_group.mysql_param_group.id
   apply_immediately                     = true

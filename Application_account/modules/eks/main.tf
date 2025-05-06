@@ -166,7 +166,7 @@ resource "aws_security_group" "cluster" {
   egress {
     from_port   = 443
     to_port     = 443
-    protocol    = "https"
+    protocol    = "tcp"
     cidr_blocks = var.restrictive_cidr_range
     description = "Allow access from specified CIDR blocks"
   }

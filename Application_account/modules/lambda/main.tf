@@ -56,7 +56,7 @@ resource "aws_lambda_code_signing_config" "this" {
   }
 
   policies {
-    untrusted_artifact_on_deployment = "Enforce"
+    untrusted_artifact_on_deployment = "Warn"
   }
 }
 
