@@ -1,0 +1,15 @@
+## Auto generated providers.tf ##
+## Updated on: {{ timestamp }} ##
+
+provider "aws" {
+  region = "{{ provider_region }}"
+  assume_role {
+    role_arn    = "{{ target_admin_role_arn }}"
+  }
+  default_tags {
+    tags = {
+      for key, value in { for k, v in var.user_defined_tags : k => v if k != "" && v != "" } :
+         key => value
+      }
+  }
+}
